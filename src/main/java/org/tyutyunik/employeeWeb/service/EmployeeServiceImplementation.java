@@ -1,17 +1,19 @@
 package org.tyutyunik.employeeWeb.service;
 
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 public class EmployeeServiceImplementation implements EmployeeService {
 
-    final int employeeCountMax = 10;
+    private static final int EMPLOYEES_MAX = 10;
 
     private List<Employee> employees = new ArrayList<>();
-    private int employeesCounter;
 
     @Override
     public String standardAnswer() {
@@ -19,8 +21,13 @@ public class EmployeeServiceImplementation implements EmployeeService {
     }
 
     @Override
-    public String addEmployee(String firstName, String lastName) throws EmployeeAlreadyAddedException, EmployeeStorageIsFullException {
-        if (employees.size() < employeeCountMax) {
+    public ResponseEntity<List<Employee>> getData() {
+        return ResponseEntity.ok(employees);
+    }
+
+    @Override
+    public String addEmployee(String firstName, String lastName) throws Exception {
+        if (employees.size() < EMPLOYEES_MAX) {
             for (int i = 0; i < employees.size(); i++) {
                 if (firstName.equals(employees.get(i).getFirstName()) && lastName.equals(employees.get(i).getLastName())) {
                     throw new EmployeeAlreadyAddedException("Сотрудник не может быть добавлен, потому что уже существует");
@@ -34,7 +41,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
     }
 
     @Override
-    public String removeEmployee(String firstName, String lastName) throws EmployeeNotFoundException {
+    public String removeEmployee(String firstName, String lastName) throws Exception {
         for (int i = 0; i < employees.size(); i++) {
             if (firstName.equals(employees.get(i).getFirstName()) && lastName.equals(employees.get(i).getLastName())) {
                 employees.remove(i);
@@ -45,7 +52,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
     }
 
     @Override
-    public String findEmployee(String firstName, String lastName) throws EmployeeNotFoundException {
+    public String findEmployee(String firstName, String lastName) throws Exception {
         for (int i = 0; i < employees.size(); i++) {
             if (firstName.equals(employees.get(i).getFirstName()) && lastName.equals(employees.get(i).getLastName())) {
                 return "Сотрудник найден";

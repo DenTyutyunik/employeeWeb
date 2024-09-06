@@ -1,12 +1,13 @@
 package org.tyutyunik.employeeWeb.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.tyutyunik.employeeWeb.service.Employee;
 import org.tyutyunik.employeeWeb.service.EmployeeService;
 import org.tyutyunik.employeeWeb.service.EmployeeServiceImplementation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,52 +24,50 @@ public class EmployeeController {
         return employeeService.standardAnswer();
     }
 
+    @GetMapping("/data")
+    public ResponseEntity<List<Employee>> getData() {
+        return employeeService.getData();
+    }
+
     @GetMapping("/add")
-    public String add(@RequestParam Optional<String> firstName,
-                      @RequestParam Optional<String> lastName) throws Exception {
+    public ResponseEntity<String> add(@RequestParam Optional<String> firstName,
+                                      @RequestParam Optional<String> lastName) throws Exception {
         if (firstName.isPresent() && lastName.isPresent()) {
             try {
-                return employeeService.addEmployee(firstName.get(), lastName.get());
-            } catch (EmployeeAlreadyAddedException e) {
-                System.out.println(e.getMessage()); // message for debug
-                return e.getMessage(); // message for user
-            } catch (EmployeeStorageIsFullException e) {
-                System.out.println(e.getMessage()); // message for debug
-                return e.getMessage(); // message for user
+                return ResponseEntity.status(HttpStatus.OK).body(employeeService.addEmployee(firstName.get(), lastName.get()));
+            } catch (EmployeeAlreadyAddedException | EmployeeStorageIsFullException e) {
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
             }
         } else {
-            System.out.println("Нет одного из параметров");
-            return "Нет одного из параметров";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Нет одного из параметров");
         }
     }
 
     @GetMapping("/remove")
-    public String remove(@RequestParam Optional<String> firstName,
-                         @RequestParam Optional<String> lastName) throws Exception {
+    public ResponseEntity<String> remove(@RequestParam Optional<String> firstName,
+                                         @RequestParam Optional<String> lastName) throws Exception {
         if (firstName.isPresent() && lastName.isPresent()) {
             try {
-                return employeeService.removeEmployee(firstName.get(), lastName.get());
+                return ResponseEntity.status(HttpStatus.OK).body(employeeService.removeEmployee(firstName.get(), lastName.get()));
             } catch (EmployeeNotFoundException e) {
-                System.out.println(e.getMessage()); // message for debug
-                return e.getMessage(); // message for user
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
             }
         } else {
-            return "Нет одного из параметров";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Нет одного из параметров");
         }
     }
 
     @GetMapping("/find")
-    public String find(@RequestParam Optional<String> firstName,
-                       @RequestParam Optional<String> lastName) throws Exception {
+    public ResponseEntity<String> find(@RequestParam Optional<String> firstName,
+                                       @RequestParam Optional<String> lastName) throws Exception {
         if (firstName.isPresent() && lastName.isPresent()) {
             try {
-                return employeeService.findEmployee(firstName.get(), lastName.get());
+                return ResponseEntity.status(HttpStatus.OK).body(employeeService.findEmployee(firstName.get(), lastName.get()));
             } catch (EmployeeNotFoundException e) {
-                System.out.println(e.getMessage()); // message for debug
-                return e.getMessage(); // message for user
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
             }
         } else {
-            return "Нет одного из параметров";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Нет одного из параметров");
         }
     }
 }
