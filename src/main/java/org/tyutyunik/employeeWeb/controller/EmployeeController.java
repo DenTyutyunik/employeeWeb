@@ -1,22 +1,27 @@
 package org.tyutyunik.employeeWeb.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tyutyunik.employeeWeb.service.Employee;
+import org.tyutyunik.employeeWeb.exceptions.BadRequestException;
+import org.tyutyunik.employeeWeb.model.Employee;
 import org.tyutyunik.employeeWeb.service.EmployeeService;
-import org.tyutyunik.employeeWeb.service.EmployeeServiceImplementation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
+
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
+    }
+
+    public static void checkArguments(String arg1, String arg2) throws Exception {
+        if (arg1 == null || arg2 == null) {
+            throw new BadRequestException();
+        }
     }
 
     @GetMapping("")
@@ -24,50 +29,29 @@ public class EmployeeController {
         return employeeService.standardAnswer();
     }
 
-    @GetMapping("/data")
-    public ResponseEntity<List<Employee>> getData() {
+    @GetMapping("/get/all")
+    public List<Employee> getData() {
         return employeeService.getData();
     }
 
     @GetMapping("/add")
-    public ResponseEntity<String> add(@RequestParam Optional<String> firstName,
-                                      @RequestParam Optional<String> lastName) throws Exception {
-        if (firstName.isPresent() && lastName.isPresent()) {
-            try {
-                return ResponseEntity.status(HttpStatus.OK).body(employeeService.addEmployee(firstName.get(), lastName.get()));
-            } catch (EmployeeAlreadyAddedException | EmployeeStorageIsFullException e) {
-                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Нет одного из параметров");
-        }
+    public Employee add(@RequestParam(required = false) String firstName,
+                        @RequestParam(required = false) String lastName) throws Exception {
+        checkArguments(firstName, lastName);
+        return employeeService.addEmployee(firstName, lastName);
     }
 
     @GetMapping("/remove")
-    public ResponseEntity<String> remove(@RequestParam Optional<String> firstName,
-                                         @RequestParam Optional<String> lastName) throws Exception {
-        if (firstName.isPresent() && lastName.isPresent()) {
-            try {
-                return ResponseEntity.status(HttpStatus.OK).body(employeeService.removeEmployee(firstName.get(), lastName.get()));
-            } catch (EmployeeNotFoundException e) {
-                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Нет одного из параметров");
-        }
+    public Employee remove(@RequestParam(required = false) String firstName,
+                           @RequestParam(required = false) String lastName) throws Exception {
+        checkArguments(firstName, lastName);
+        return employeeService.removeEmployee(firstName, lastName);
     }
 
     @GetMapping("/find")
-    public ResponseEntity<String> find(@RequestParam Optional<String> firstName,
-                                       @RequestParam Optional<String> lastName) throws Exception {
-        if (firstName.isPresent() && lastName.isPresent()) {
-            try {
-                return ResponseEntity.status(HttpStatus.OK).body(employeeService.findEmployee(firstName.get(), lastName.get()));
-            } catch (EmployeeNotFoundException e) {
-                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Нет одного из параметров");
-        }
+    public Employee find(@RequestParam(required = false) String firstName,
+                         @RequestParam(required = false) String lastName) throws Exception {
+        checkArguments(firstName, lastName);
+        return employeeService.findEmployee(firstName, lastName);
     }
 }

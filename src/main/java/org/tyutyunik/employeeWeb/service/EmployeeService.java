@@ -1,17 +1,17 @@
 package org.tyutyunik.employeeWeb.service;
 
-import org.springframework.http.ResponseEntity;
+import org.tyutyunik.employeeWeb.model.Employee;
 
 import java.util.List;
 
 public interface EmployeeService {
     String standardAnswer();
 
-    ResponseEntity<List<Employee>> getData();
+    List<Employee> getData();
 
-    String addEmployee(String firstName, String lastName) throws Exception;
+    Employee addEmployee(String firstName, String lastName) throws Exception;
 
-    String removeEmployee(String firstName, String lastName) throws Exception;
+    Employee removeEmployee(String firstName, String lastName) throws Exception;
 
-    String findEmployee(String firstName, String lastName) throws Exception;
+    Employee findEmployee(String firstName, String lastName) throws Exception;
 }

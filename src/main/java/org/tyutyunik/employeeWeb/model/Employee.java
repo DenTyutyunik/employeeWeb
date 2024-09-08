@@ -1,4 +1,4 @@
-package org.tyutyunik.employeeWeb.service;
+package org.tyutyunik.employeeWeb.model;
 
 import java.util.Objects;
 
