@@ -31,20 +31,23 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public boolean isEquals(Employee obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
-        } else {
-            return firstName.equals(obj.firstName) && lastName.equals(obj.lastName);
         }
+        Employee other = (Employee) obj;
+        return firstName.equals(other.firstName) && lastName.equals(other.lastName);
     }
 
+    @Override
     public String toString() {
         return "Employee name = [" + this.getFullName() + "]";
     }
 
+    @Override
     public int hashCode() {
         return Objects.hash(firstName, lastName);
     }

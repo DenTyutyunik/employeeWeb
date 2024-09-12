@@ -9,9 +9,9 @@ public interface EmployeeService {
 
     List<Employee> getData();
 
-    Employee addEmployee(String firstName, String lastName) throws Exception;
+    Employee addEmployee(String firstName, String lastName);
 
-    Employee removeEmployee(String firstName, String lastName) throws Exception;
+    Employee removeEmployee(String firstName, String lastName);
 
-    Employee findEmployee(String firstName, String lastName) throws Exception;
+    Employee findEmployee(String firstName, String lastName);
 }
